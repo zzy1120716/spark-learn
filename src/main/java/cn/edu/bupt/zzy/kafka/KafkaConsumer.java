@@ -58,7 +58,7 @@ public class KafkaConsumer extends Thread {
 
         while (iterator.hasNext()) {
             String message = new String(iterator.next().message());
-            System.out.println("rec: " + message);
+            System.out.println("Recv: " + message);
         }
 
     }
