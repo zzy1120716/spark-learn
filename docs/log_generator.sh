@@ -1,0 +1,1 @@
+python /home/hadoop/data/project2/generate_log.py
