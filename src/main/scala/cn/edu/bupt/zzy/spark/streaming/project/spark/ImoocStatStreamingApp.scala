@@ -1,8 +1,9 @@
-package cn.edu.bupt.zzy.spark.project.spark
+package cn.edu.bupt.zzy.spark.streaming.project.spark
 
-import cn.edu.bupt.zzy.spark.project.dao.{CourseClickCountDAO, CourseSearchClickCountDAO}
-import cn.edu.bupt.zzy.spark.project.domain.{ClickLog, CourseClickCount, CourseSearchClickCount}
-import cn.edu.bupt.zzy.spark.project.utils.DateUtils
+import cn.edu.bupt.zzy.spark.streaming.project.domain.ClickLog
+import cn.edu.bupt.zzy.spark.streaming.project.utils.DateUtils
+import cn.edu.bupt.zzy.spark.streaming.project.dao.{CourseClickCountDAO, CourseSearchClickCountDAO}
+import cn.edu.bupt.zzy.spark.streaming.project.domain.{CourseClickCount, CourseSearchClickCount}
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}

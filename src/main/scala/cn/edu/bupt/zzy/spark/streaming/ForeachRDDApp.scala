@@ -1,4 +1,4 @@
-package cn.edu.bupt.zzy.spark
+package cn.edu.bupt.zzy.spark.streaming
 
 import java.sql.DriverManager
 

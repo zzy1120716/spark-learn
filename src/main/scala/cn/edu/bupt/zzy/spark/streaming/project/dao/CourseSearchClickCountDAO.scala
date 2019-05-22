@@ -1,26 +1,26 @@
-package cn.edu.bupt.zzy.spark.project.dao
+package cn.edu.bupt.zzy.spark.streaming.project.dao
 
-import cn.edu.bupt.zzy.spark.project.domain.CourseClickCount
-import cn.edu.bupt.zzy.spark.project.utils.HBaseUtils
+import cn.edu.bupt.zzy.spark.streaming.project.domain.CourseSearchClickCount
+import cn.edu.bupt.zzy.spark.streaming.project.utils.HBaseUtils
 import org.apache.hadoop.hbase.client.Get
 import org.apache.hadoop.hbase.util.Bytes
 
 import scala.collection.mutable.ListBuffer
 
 /**
-  * 实战课程点击数 - 数据访问层
+  * 从搜索引擎过来的实战课程点击数 - 数据访问层
   */
-object CourseClickCountDAO {
+object CourseSearchClickCountDAO {
 
-  val tableName = "my_course_clickcount"
+  val tableName = "my_course_search_clickcount"
   val cf = "info"
   val qualifier = "click_count"
 
   /**
     * 保存数据到HBase
-    * @param list CourseClickCount集合
+    * @param list CourseSearchClickCount集合
     */
-  def save(list: ListBuffer[CourseClickCount]): Unit = {
+  def save(list: ListBuffer[CourseSearchClickCount]): Unit = {
 
     val table = HBaseUtils.getInstance().getTable(tableName)
 
@@ -28,7 +28,7 @@ object CourseClickCountDAO {
 
       // 在已有的值的基础上增加
       table.incrementColumnValue(
-        Bytes.toBytes(ele.day_course),
+        Bytes.toBytes(ele.day_search_course),
         Bytes.toBytes(cf),
         Bytes.toBytes(qualifier),
         ele.click_count)
@@ -39,11 +39,11 @@ object CourseClickCountDAO {
   /**
     * 根据rowkey查询值
     */
-  def count(day_course: String): Long = {
+  def count(day_search_course: String): Long = {
 
     val table = HBaseUtils.getInstance().getTable(tableName)
 
-    val get = new Get(Bytes.toBytes(day_course))
+    val get = new Get(Bytes.toBytes(day_search_course))
     val value = table.get(get).getValue(cf.getBytes, qualifier.getBytes)
 
     // 第一次操作值是没有的，要做判断
@@ -57,14 +57,13 @@ object CourseClickCountDAO {
 
   def main(args: Array[String]): Unit = {
 
-    val list = new ListBuffer[CourseClickCount]
-    list.append(CourseClickCount("20181111_8", 8))
-    list.append(CourseClickCount("20181111_9", 9))
-    list.append(CourseClickCount("20181111_1", 100))
+    val list = new ListBuffer[CourseSearchClickCount]
+    list.append(CourseSearchClickCount("20171111_www.baidu.com_8",8))
+    list.append(CourseSearchClickCount("20171111_cn.bing.com_9",9))
 
     save(list)
 
-    println(count("20181111_8") + " : " + count("20181111_9") + " : " + count("20181111_1"))
+    println(count("20171111_www.baidu.com_8") + " : " + count("20171111_cn.bing.com_9"))
   }
 
 }

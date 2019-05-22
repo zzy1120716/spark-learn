@@ -1,23 +1,25 @@
-package cn.edu.bupt.zzy.spark
+package cn.edu.bupt.zzy.spark.streaming
 
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 /**
-  * 使用Spark Streaming处理文件系统（local/hdfs）的数据
+  * Spark Streaming处理Socket数据
+  *
+  * 测试：nc
   */
-object FileWordCount {
+object NetworkWordCount {
 
   def main(args: Array[String]): Unit = {
 
-    /**
-      * 此处master URL可以是local，因为文件的DStream不需要receiver
-      */
-    val sparkConf = new SparkConf().setMaster("local").setAppName("FileWordCount")
+    val sparkConf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount")
 
+    /**
+      * 创建StreamingContext需要两个参数：SparkConf和batch interval
+      */
     val ssc = new StreamingContext(sparkConf, Seconds(5))
 
-    val lines = ssc.textFileStream("file:///Users/zzy/data/imooc/ss/")
+    val lines = ssc.socketTextStream("hadoop000", 6789)
 
     val result = lines.flatMap(_.split(" ")).map((_, 1)).reduceByKey(_ + _)
 

@@ -1,4 +1,4 @@
-package cn.edu.bupt.zzy.spark
+package cn.edu.bupt.zzy.spark.streaming
 
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}

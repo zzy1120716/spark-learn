@@ -1,4 +1,4 @@
-package cn.edu.bupt.zzy.spark.project.domain
+package cn.edu.bupt.zzy.spark.streaming.project.domain
 
 /**
   * 清洗后的日志信息
