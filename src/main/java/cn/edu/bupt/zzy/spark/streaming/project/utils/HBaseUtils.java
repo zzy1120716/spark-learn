@@ -1,4 +1,4 @@
-package cn.edu.bupt.zzy.spark.project.utils;
+package cn.edu.bupt.zzy.spark.streaming.project.utils;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.*;

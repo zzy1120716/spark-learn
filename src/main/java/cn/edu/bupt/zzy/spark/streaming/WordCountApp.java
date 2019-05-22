@@ -1,4 +1,4 @@
-package cn.edu.bupt.zzy;
+package cn.edu.bupt.zzy.spark.streaming;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
