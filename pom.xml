@@ -125,6 +125,25 @@
             <version>5.1.31</version>
         </dependency>
 
+        <!-- ip地址解析 -->
+        <dependency>
+            <groupId>com.ggstar</groupId>
+            <artifactId>ipdatabase</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.14</version>
+        </dependency>
+
         <!-- Flume log4j appender 依赖 -->
         <dependency>
             <groupId>org.apache.flume.flume-ng-clients</groupId>
