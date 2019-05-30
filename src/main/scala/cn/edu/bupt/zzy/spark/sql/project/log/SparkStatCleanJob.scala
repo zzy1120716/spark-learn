@@ -1,6 +1,6 @@
 package cn.edu.bupt.zzy.spark.sql.project.log
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
   * 使用Spark完成数据清洗操作
@@ -20,8 +20,13 @@ object SparkStatCleanJob {
     val accessDF = spark.createDataFrame(accessRDD.map(x => AccessConvertUtil.parseLog(x)),
       AccessConvertUtil.struct)
 
-    accessDF.printSchema()
-    accessDF.show(false)
+    //accessDF.printSchema()
+    //accessDF.show(false)
+
+    accessDF.coalesce(1).write.format("parquet")
+      .mode(SaveMode.Overwrite)
+      .partitionBy("day")
+      .save("file:///C:\\Users\\zzy\\data\\clean")
 
     spark.stop()
   }
