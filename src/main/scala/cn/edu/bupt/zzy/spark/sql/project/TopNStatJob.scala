@@ -1,8 +1,11 @@
 package cn.edu.bupt.zzy.spark.sql.project
 
+import cn.edu.bupt.zzy.spark.sql.project.dao.StatDAO
+import cn.edu.bupt.zzy.spark.sql.project.model.DayVideoAccessStat
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import org.apache.spark.sql.functions._
+
+import scala.collection.mutable.ListBuffer
 
 /**
   * TopN统计Spark作业
@@ -50,6 +53,29 @@ object TopNStatJob {
       "group by day, cmsId order by times desc")
 
     videoAccessTopNDF.show(false)
+
+    /**
+      * 将统计结果写入到MySQL中
+      */
+    try {
+      videoAccessTopNDF.foreachPartition(partitionOfRecords => {
+        val list = new ListBuffer[DayVideoAccessStat]
+
+        partitionOfRecords.foreach(info => {
+          val day = info.getAs[String]("day")
+          val cmsId = info.getAs[Long]("cmsId")
+          val times = info.getAs[Long]("times")
+
+          list.append(DayVideoAccessStat(day, cmsId, times))
+        })
+
+        StatDAO.insertDayVideoAccessTopN(list)
+
+      })
+    } catch {
+      case e:Exception => e.printStackTrace()
+    }
+
   }
 
 }
