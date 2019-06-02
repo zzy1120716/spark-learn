@@ -9,10 +9,14 @@ object SparkStatCleanJob {
 
   def main(args: Array[String]): Unit = {
 
-    val spark = SparkSession.builder().appName("SparkStatCleanJob").master("local[2]").getOrCreate()
+    val spark = SparkSession.builder().appName("SparkStatCleanJob")
+      // 设置压缩格式为gzip
+      .config("spark.sql.parquet.compression.codec", "gzip")
+      .master("local[2]").getOrCreate()
 
     // C:\Users\zzy\data\access.log
-    val accessRDD = spark.sparkContext.textFile("file:///C:\\Users\\zzy\\data\\access.log")
+    //val accessRDD = spark.sparkContext.textFile("file:///C:\\Users\\zzy\\data\\access.log")
+    val accessRDD = spark.sparkContext.textFile("file:///Users/zzy/data/access.log")
 
     //accessRDD.take(10).foreach(println)
 
@@ -26,7 +30,8 @@ object SparkStatCleanJob {
     accessDF.coalesce(1).write.format("parquet")
       .mode(SaveMode.Overwrite)
       .partitionBy("day")
-      .save("file:///C:\\Users\\zzy\\data\\clean")
+      //.save("file:///C:\\Users\\zzy\\data\\clean")
+      .save("file:///Users/zzy/data/clean2")
 
     spark.stop()
   }

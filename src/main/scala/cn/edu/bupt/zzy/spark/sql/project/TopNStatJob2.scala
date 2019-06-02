@@ -3,15 +3,15 @@ package cn.edu.bupt.zzy.spark.sql.project
 import cn.edu.bupt.zzy.spark.sql.project.dao.StatDAO
 import cn.edu.bupt.zzy.spark.sql.project.model.{DayCityVideoAccessStat, DayVideoAccessStat, DayVideoTrafficsStat}
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import scala.collection.mutable.ListBuffer
 
 /**
-  * TopN统计Spark作业
+  * TopN统计Spark作业：复用已有的数据
   */
-object TopNStatJob {
+object TopNStatJob2 {
 
   def main(args: Array[String]): Unit = {
 
@@ -27,17 +27,26 @@ object TopNStatJob {
 
     val day = "20170511"
 
+    import spark.implicits._
+    val commonDF = accessDF.filter($"day" === day && $"cmsType" === "video")
+
+    // 缓存复用的数据
+    commonDF.cache()
+
     // 删除表中已有的这一天的统计结果
     StatDAO.deleteData(day)
 
     // 最受欢迎的TopN课程
-    videoAccessTopNStat(spark, accessDF, day)
+    videoAccessTopNStat(spark, commonDF)
 
     // 按照地市进行统计TopN课程
-    cityAccessTopNStat(spark, accessDF, day)
+    cityAccessTopNStat(spark, commonDF)
 
     // 按照流量进行统计
-    videoTrafficsTopNStat(spark, accessDF, day)
+    videoTrafficsTopNStat(spark, commonDF)
+
+    // 从缓存中驱除
+    commonDF.unpersist(true)
 
     spark.stop()
   }
@@ -46,12 +55,11 @@ object TopNStatJob {
   /**
     * 按照流量进行统计
     */
-  def videoTrafficsTopNStat(spark: SparkSession, accessDF: DataFrame, day: String): Unit = {
+  def videoTrafficsTopNStat(spark: SparkSession, commonDF: DataFrame): Unit = {
 
     import spark.implicits._
 
-    val videoTrafficsDF = accessDF.filter($"day" === day && $"cmsType" === "video")
-      .groupBy("day", "cmsId")
+    val videoTrafficsDF = commonDF.groupBy("day", "cmsId")
       .agg(sum("traffic").as("traffics"))
       .orderBy($"traffics".desc)
       //.show(false)
@@ -84,12 +92,9 @@ object TopNStatJob {
   /**
     * 按照地市进行统计TopN课程
     */
-  def cityAccessTopNStat(spark: SparkSession, accessDF: DataFrame, day: String): Unit = {
+  def cityAccessTopNStat(spark: SparkSession, commonDF: DataFrame): Unit = {
 
-    import spark.implicits._
-
-    val cityAccessTopNDF = accessDF.filter($"day" === day && $"cmsType" === "video")
-      .groupBy("day", "city", "cmsId")
+    val cityAccessTopNDF = commonDF.groupBy("day", "city", "cmsId")
       .agg(count("cmsId").as("times"))
 
     //cityAccessTopNDF.show(false)
@@ -134,15 +139,14 @@ object TopNStatJob {
   /**
     * 最受欢迎的TopN课程
     */
-  def videoAccessTopNStat(spark: SparkSession, accessDF: DataFrame, day: String): Unit = {
+  def videoAccessTopNStat(spark: SparkSession, commonDF: DataFrame): Unit = {
 
     /**
       * DataFrame方式
       */
     import spark.implicits._
 
-    val videoAccessTopNDF = accessDF.filter($"day" === day && $"cmsType" === "video")
-      .groupBy("day", "cmsId").agg(count("cmsId").as("times")).orderBy($"times".desc)
+    val videoAccessTopNDF = commonDF.groupBy("day", "cmsId").agg(count("cmsId").as("times")).orderBy($"times".desc)
 
     videoAccessTopNDF.show(false)
 

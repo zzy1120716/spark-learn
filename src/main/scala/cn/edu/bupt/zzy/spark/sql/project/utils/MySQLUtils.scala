@@ -12,7 +12,8 @@ object MySQLUtils {
     */
   def getConnection() = {
     //DriverManager.getConnection("jdbc:mysql://localhost:3306/imooc_project?user=root&password=root")
-    DriverManager.getConnection("jdbc:mysql://localhost/imooc_project?user=root&password=1q2w3e4r&useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC")
+    //DriverManager.getConnection("jdbc:mysql://localhost/imooc_project?user=root&password=1q2w3e4r&useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC")
+    DriverManager.getConnection("jdbc:mysql://localhost/imooc_project?user=root&password=root")
   }
 
   /**
